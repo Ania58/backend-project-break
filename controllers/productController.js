@@ -158,6 +158,15 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find(); 
+        res.render('products', { products }); 
+    } catch (error) {
+        res.status(500).send({ message: "An error occurred while fetching products" });
+    }
+};
+
 const getProductsByCategory = (category) => async (req, res) => {
     try {
         const products = await Product.find({ category }); 
@@ -170,6 +179,7 @@ const getProductsByCategory = (category) => async (req, res) => {
 
 // Export your functions to use in routes
 module.exports = {
+    getAllProducts,
     showProducts,
     showProductById,
     showNewProduct,

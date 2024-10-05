@@ -14,7 +14,7 @@ router.delete('/dashboard/:productId/delete', productController.deleteProduct);
 
 
 
-
+router.get('/products', productController.getAllProducts);
 router.get('/products/tshirts', productController.getProductsByCategory('T-shirts'));
 router.get('/products/trousers', productController.getProductsByCategory('Trousers'));
 router.get('/products/shoes', productController.getProductsByCategory('Shoes'));
