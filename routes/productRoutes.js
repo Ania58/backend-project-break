@@ -1,9 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product.js"); 
+const productController = require('../controllers/productController');
+
+router.get('/', productController.showProducts);
+router.get('/products/:productId', productController.showProductById);
+router.get('/dashboard/:productId', productController.showProductById);
+router.get('/dashboard/new', productController.showNewProduct);
+router.post('/dashboard', productController.createProduct);
+router.get('/dashboard/:productId/edit', productController.showEditProduct);
+router.put('/dashboard/:productId', productController.updateProduct);
+router.delete('/dashboard/:productId/delete', productController.deleteProduct);
 
 
-router.get("/", async(req,res) => {
+
+
+router.get('/products/tshirts', productController.getProductsByCategory('T-shirts'));
+router.get('/products/trousers', productController.getProductsByCategory('Trousers'));
+router.get('/products/shoes', productController.getProductsByCategory('Shoes'));
+router.get('/products/coats', productController.getProductsByCategory('Coats'));
+
+
+/*router.get("/", async(req,res) => {
     try {
         const products = await Product.find(); 
         res.status(200).json(products);
@@ -205,6 +223,6 @@ router.delete("/dashboard/:productId/delete", async(req,res) => {
             .status(500)
             .json({ message: "An error occurred while fetching the product" });
     }
-})
+})*/
 
 module.exports = router;
