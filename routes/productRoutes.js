@@ -5,21 +5,29 @@ const productController = require('../controllers/productController');
 
 router.get('/', productController.showProducts);
 router.get('/dashboard', productController.showProducts);
+
+router.get('/products/T-shirt', productController.getProductsByCategory);
+router.get('/products', productController.showProducts);
+router.get('/products/Trousers', productController.getProductsByCategory);
+router.get('/products/Shoes', productController.getProductsByCategory);
+router.get('/products/Coats', productController.getProductsByCategory);
+
 router.get('/products/:productId', productController.showProductById);
-router.get('/dashboard/:productId', productController.showProductById);
+
 router.get('/dashboard/new', productController.showNewProduct);
+router.get('/dashboard/:productId', productController.showProductById);
+
 router.post('/dashboard', productController.createProduct);
+
 router.get('/dashboard/:productId/edit', productController.showEditProduct);
 router.put('/dashboard/:productId', productController.updateProduct);
+
+router.get('/dashboard/:productId/delete', productController.deleteProduct); 
 router.delete('/dashboard/:productId/delete', productController.deleteProduct);
 
 
 
-router.get('/products', productController.getAllProducts);
-router.get('/products/tshirts', productController.getProductsByCategory('T-shirts'));
-router.get('/products/trousers', productController.getProductsByCategory('Trousers'));
-router.get('/products/shoes', productController.getProductsByCategory('Shoes'));
-router.get('/products/coats', productController.getProductsByCategory('Coats'));
+
 
 
 /*router.get("/", async(req,res) => {

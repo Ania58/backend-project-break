@@ -9,28 +9,27 @@ function getNavBar() {
         <nav>
             <ul>
                 <li><a href="/products">Products</a></li>
-                <li><a href="/products/tshirts">T-shirts</a></li>
-                <li><a href="/products/trousers">Trousers</a></li>
-                <li><a href="/products/shoes">Shoes</a></li>
-                <li><a href="/products/coats">Coats</a></li>
+                <li><a href="/products/T-shirt">T-shirts</a></li>
+                <li><a href="/products/Trousers">Trousers</a></li>
+                <li><a href="/products/Shoes">Shoes</a></li>
+                <li><a href="/products/Coats">Coats</a></li>
             </ul>
     </nav>`;
 }
 
 // Function to generate product cards HTML
-function getProductCards(products, isDashboard = false) {
+function getProductCards(products, isDashboard) {
     let html = '<div class="product-container">';
     for (let product of products) {
         html += `
             <div class="product-card">
                 <img src="${product.image}" alt="${product.name}">
                 <h2>${product.name}</h2>
-                <a href="/products/${product._id}">View Details</a>
-                ${isDashboard ? `<a href="/dashboard/${product._id}/edit">Edit</a>
-                                 <a href="/dashboard/${product._id}/delete">Delete</a>` : ''}
+                 <a href="${isDashboard ? '/dashboard/' + product._id : '/products/' + product._id}">View Details</a>
             </div>
         `;
     }
+    html += '</div>';
     return html;
 }
 
@@ -56,13 +55,17 @@ const showProductById = async (req, res) => {
         }
         const isDashboard = req.url.includes('dashboard');
         const html = baseHtml + getNavBar() + `
+        <div class="product-detail">
             <h1>${product.name}</h1>
-            <img src="${product.image}" alt="${product.name}">
-            <p>${product.description}</p>
-            <p>${product.price}€</p>
-            <p>Size: ${product.size}</p>
-            ${isDashboard ? `<a href="/dashboard/${product._id}/edit">Edit</a>
-                             <a href="/dashboard/${product._id}/delete">Delete</a>` : ''}
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <p class="description">${product.description}</p>
+            <p class="price">${product.price}€</p>
+            <p class="size">Size: ${product.size}</p>
+            ${isDashboard ? `
+                <div class="button-container">
+                <a href="/dashboard/${product._id}/edit" class="button">Edit</a>
+                <a href="/dashboard/${product._id}/delete" class="button">Delete</a></div>`: ''}
+            </div>
         </body></html>`;
         res.send(html);
     } catch (error) {
@@ -73,6 +76,7 @@ const showProductById = async (req, res) => {
 // Show form to create a new product
 const showNewProduct = (req, res) => {
     const html = baseHtml + getNavBar() + `
+     <div class="new-product-form">
         <h1>Create New Product</h1>
         <form action="/dashboard" method="POST">
             <label>Name:</label>
@@ -89,6 +93,7 @@ const showNewProduct = (req, res) => {
             <input type="number" name="price" required><br>
             <button type="submit">Create Product</button>
         </form>
+    </div>
     </body></html>`;
     res.send(html);
 };
@@ -116,16 +121,39 @@ const showEditProduct = async (req, res) => {
             return res.status(404).json({ message: "The product with the provided id does not exist" });
         }
         const html = baseHtml + getNavBar() + `
+        <div class="edit-product-form">
             <h1>Edit Product</h1>
             <form action="/dashboard/${product._id}" method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
                 <input type="text" name="name" value="${product.name}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
                 <textarea name="description" required>${product.description}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="category">Category:</label>
                 <input type="text" name="category" value="${product.category}" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image URL:</label>
                 <input type="text" name="image" value="${product.image}" required>
+            </div>
+            <div class="form-group">
+                <label for="size">Size:</label>
                 <input type="text" name="size" value="${product.size}" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price:</label>
                 <input type="number" name="price" value="${product.price}" required>
+            </div>
+             <div class="button-container">
                 <button type="submit">Update Product</button>
+                 <a href="/dashboard" class="cancel-button">Cancel</a>
+                </div>
             </form>
+        </div>
         </body></html>`;
         res.send(html);
     } catch (error) {
@@ -150,30 +178,44 @@ const updateProduct = async (req, res) => {
 
 // Delete a product
 const deleteProduct = async (req, res) => {
+    const { confirm } = req.query; 
     try {
-        await Product.findByIdAndDelete(req.params.productId);
+        const product = await Product.findById(req.params.productId);
         if (!product) {
-            return res.status(404).send({ message: "The product with the provided id does not exist" })
+            return res.status(404).json({ message: "The product with the provided id does not exist" });
         }
-        res.redirect('/dashboard');
+
+        if (confirm === 'true') {
+            
+            await Product.findByIdAndDelete(req.params.productId);
+            return res.redirect('/dashboard');
+        }
+
+       
+        const html = baseHtml + getNavBar() + `
+         <div class="delete-confirmation">
+            <h1>Are you sure you want to delete "${product.name}"?</h1>
+            <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST">
+                <button type="submit">Delete</button>
+                <a href="/dashboard" class="cancel-button">Cancel</a>
+            </form>
+        </div>
+        </body></html>`;
+        res.send(html);
     } catch (error) {
         res.status(500).json({ message: "An error occurred while deleting the product" });
     }
 };
 
-const getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.find(); 
-        res.render('products', { products }); 
-    } catch (error) {
-        res.status(500).send({ message: "An error occurred while fetching products" });
-    }
-};
 
-const getProductsByCategory = (category) => async (req, res) => {
+const getProductsByCategory = async (req, res) => {
     try {
-        const products = await Product.find({ category }); 
-        const productCards = getProductCards(products); 
+        ///products/tshirts
+        const category = req.path.split('/products/').join('') // /products/T-shirt => T-shirt
+
+        const products = await Product.findOne({category}); 
+
+        const productCards = getProductCards([products]); 
         const html = baseHtml + getNavBar() + productCards + '</body></html>';
         res.send(html);
     } catch (error) {
@@ -184,7 +226,6 @@ const getProductsByCategory = (category) => async (req, res) => {
 
 // Export your functions to use in routes
 module.exports = {
-    getAllProducts,
     showProducts,
     showProductById,
     showNewProduct,
