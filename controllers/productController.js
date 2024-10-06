@@ -210,7 +210,7 @@ const deleteProduct = async (req, res) => {
 
 const getProductsByCategory = async (req, res) => {
     try {
-        ///products/tshirts
+        ///products/T-shirt
         const category = req.path.split('/products/').join('') // /products/T-shirt => T-shirt
 
         const products = await Product.findOne({category}); 
