@@ -4,6 +4,7 @@ const Product = require("../models/Product.js");
 const productController = require('../controllers/productController');
 
 router.get('/', productController.showProducts);
+router.get('/dashboard', productController.showProducts);
 router.get('/products/:productId', productController.showProductById);
 router.get('/dashboard/:productId', productController.showProductById);
 router.get('/dashboard/new', productController.showNewProduct);
