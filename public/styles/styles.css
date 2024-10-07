@@ -122,6 +122,7 @@ nav a:hover {
     height: auto; 
     max-height: 15rem; /* Ensure the image fits properly */
     object-fit: contain; /* No cutting */
+    padding: 2rem 0;
 }
 
 .product-card h2 {
