@@ -79,18 +79,30 @@ const showNewProduct = (req, res) => {
      <div class="new-product-form">
         <h1>Create New Product</h1>
         <form action="/dashboard" method="POST">
+         <div class="form-group">
             <label>Name:</label>
             <input type="text" name="name" required><br>
+        </div>
+        <div class="form-group">
             <label>Description:</label>
             <textarea name="description" required></textarea><br>
+        </div>
+        <div class="form-group">
             <label>Category:</label>
             <input type="text" name="category" required><br>
+        </div>
+        <div class="form-group">
             <label>Image URL:</label>
             <input type="text" name="image" required><br>
+        </div>
+        <div class="form-group">
             <label>Size:</label>
             <input type="text" name="size" required><br>
+        </div>
+        <div class="form-group">
             <label>Price:</label>
             <input type="number" name="price" required><br>
+        </div>
             <button type="submit">Create Product</button>
         </form>
     </div>
