@@ -146,7 +146,12 @@ const showEditProduct = async (req, res) => {
             </div>
             <div class="form-group">
                 <label for="category">Category:</label>
-                <input type="text" name="category" value="${product.category}" required>
+                <select name="category" value="${product.category}" required>
+                    <option value="T-shirt">T-shirt</option>
+                    <option value="Trousers">Trousers</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Coats">Coats</option>
+                </select><br>
             </div>
             <div class="form-group">
                 <label for="image">Image URL:</label>
