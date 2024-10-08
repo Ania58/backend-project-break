@@ -200,20 +200,60 @@ const deleteProduct = async (req, res) => {
         if (confirm === 'true') {
             
             await Product.findByIdAndDelete(req.params.productId);
-            return res.redirect('/dashboard');
+            const messageHtml = `
+            <div class="message">
+                <h1>Product "${product.name}" has been successfully deleted.</h1>
+                <p>Redirecting to the dashboard...</p>
+            </div>
+            <script>
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 3000); // Redirect after 3 seconds
+            </script>
+        `;
+        return res.send(baseHtml + getNavBar() + messageHtml);
         }
-
        
         const html = baseHtml + getNavBar() + `
          <div class="delete-confirmation">
             <h1>Are you sure you want to delete "${product.name}"?</h1>
             <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST">
-                <button type="submit">Delete</button>
+                <button type="submit"  class="button" id="delete-button">Delete</button>
                 <a href="/dashboard" class="cancel-button">Cancel</a>
             </form>
         </div>
+          <script>
+            document.getElementById('delete-button').addEventListener('click', async (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const productId = '${req.params.productId}'; // Correctly reference productId
+                try {
+                    const response = await fetch(\`/dashboard/\${productId}/delete?confirm=true\`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = '/dashboard'; // Redirect after successful deletion
+                    } else {
+                        console.log('Deletion failed:', data.message);
+                    }
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            });
+        </script>
         </body></html>`;
         res.send(html);
+        //console.log('Deleting product:', product.name);
     } catch (error) {
         res.status(500).json({ message: "An error occurred while deleting the product" });
     }

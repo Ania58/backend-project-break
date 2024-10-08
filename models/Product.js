@@ -18,7 +18,9 @@ const ProductSchema = new mongoose.Schema({
         required: true},
     price: {
         type: Number,
-        required: true}
+        required: true,
+        min:[0,'The price must be greater than 0']
+    }
 }, 
 { timestamps: true });
 
