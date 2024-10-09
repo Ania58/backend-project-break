@@ -89,7 +89,13 @@ const showNewProduct = (req, res) => {
         </div>
         <div class="form-group">
             <label>Category:</label>
-            <input type="text" name="category" required><br>
+            <select name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="T-shirt">T-shirt</option>
+                    <option value="Trousers">Trousers</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Coats">Coats</option>
+                </select><br>
         </div>
         <div class="form-group">
             <label>Image URL:</label>
@@ -101,7 +107,7 @@ const showNewProduct = (req, res) => {
         </div>
         <div class="form-group">
             <label>Price:</label>
-            <input type="number" name="price" required><br>
+            <input type="number" name="price" min="0" required><br>
         </div>
             <button type="submit">Create Product</button>
         </form>
@@ -147,10 +153,11 @@ const showEditProduct = async (req, res) => {
             <div class="form-group">
                 <label for="category">Category:</label>
                 <select name="category" value="${product.category}" required>
-                    <option value="T-shirt">T-shirt</option>
-                    <option value="Trousers">Trousers</option>
-                    <option value="Shoes">Shoes</option>
-                    <option value="Coats">Coats</option>
+                    <option value="" disabled>Select a category</option>
+                    <option value="T-shirt" ${product.category === 'T-shirt' ? 'selected' : ''}>T-shirt</option>
+                    <option value="Trousers" ${product.category === 'Trousers' ? 'selected' : ''}>Trousers</option>
+                    <option value="Shoes" ${product.category === 'Shoes' ? 'selected' : ''}>Shoes</option>
+                    <option value="Coats" ${product.category === 'Coats' ? 'selected' : ''}>Coats</option>
                 </select><br>
             </div>
             <div class="form-group">
@@ -166,11 +173,49 @@ const showEditProduct = async (req, res) => {
                 <input type="number" name="price" value="${product.price}" required>
             </div>
              <div class="button-container">
-                <button type="submit">Update Product</button>
+                <button type="submit" id="submit-button">Update Product</button>
                  <a href="/dashboard" class="cancel-button">Cancel</a>
                 </div>
             </form>
         </div>
+        <script>
+        document.getElementById('submit-button').addEventListener('click', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const productId = '${req.params.productId}'; // Correctly reference productId
+              const formData = {
+                name: document.querySelector('input[name="name"]').value,
+                description: document.querySelector('textarea[name="description"]').value,
+                category: document.querySelector('select[name="category"]').value,
+                image: document.querySelector('input[name="image"]').value,
+                size: document.querySelector('input[name="size"]').value,
+                price: document.querySelector('input[name="price"]').value
+            };
+            try {
+                const response = await fetch(\`/dashboard/\${productId}\`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = '/dashboard'; // Redirect after successful deletion
+                } else {
+                    console.log('Edition failed:', data.message);
+                }
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        });
+        </script>
         </body></html>`;
         res.send(html);
     } catch (error) {
@@ -205,64 +250,73 @@ const deleteProduct = async (req, res) => {
         if (confirm === 'true') {
             
             await Product.findByIdAndDelete(req.params.productId);
-            const messageHtml = `
-            <div class="message">
-                <h1>Product "${product.name}" has been successfully deleted.</h1>
-                <p>Redirecting to the dashboard...</p>
-            </div>
-            <script>
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 3000); // Redirect after 3 seconds
-            </script>
+            
+
+        if (req.headers['content-type'] === 'application/json') {
+            return res.json({ success: true, message: `Product "${product.name}" has been successfully deleted.` });
+        }
+
+        // Return HTML with a deletion success message and auto-redirect
+        const messageHtml = `
+        <div class="message">
+            <h1>Product "${product.name}" has been successfully deleted.</h1>
+            <p>Redirecting to the dashboard...</p>
+        </div>
+        <script>
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 3000); // Redirect after 3 seconds
+        </script>
         `;
         return res.send(baseHtml + getNavBar() + messageHtml);
         }
-       
+
+        // If 'confirm' is not true, show the confirmation page
         const html = baseHtml + getNavBar() + `
-         <div class="delete-confirmation">
-            <h1>Are you sure you want to delete "${product.name}"?</h1>
-            <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST">
-                <button type="submit"  class="button" id="delete-button">Delete</button>
-                <a href="/dashboard" class="cancel-button">Cancel</a>
-            </form>
+        <div class="delete-confirmation">
+        <h1>Are you sure you want to delete "${product.name}"?</h1>
+        <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST">
+            <button type="submit"  class="button" id="delete-button">Delete</button>
+            <a href="/dashboard" class="cancel-button">Cancel</a>
+        </form>
         </div>
-          <script>
-            document.getElementById('delete-button').addEventListener('click', async (event) => {
-                event.preventDefault(); // Prevent default form submission
+        <script>
+        document.getElementById('delete-button').addEventListener('click', async (event) => {
+            event.preventDefault(); // Prevent default form submission
 
-                const productId = '${req.params.productId}'; // Correctly reference productId
-                try {
-                    const response = await fetch(\`/dashboard/\${productId}/delete?confirm=true\`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
+            const productId = '${req.params.productId}'; // Correctly reference productId
+            try {
+                const response = await fetch(\`/dashboard/\${productId}/delete?confirm=true\`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        window.location.href = '/dashboard'; // Redirect after successful deletion
-                    } else {
-                        console.log('Deletion failed:', data.message);
-                    }
-                } catch (error) {
-                    console.error('There was a problem with the fetch operation:', error);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);  // Show success message
+                    window.location.href = '/dashboard'; // Redirect after successful deletion
+                } else {
+                    console.log('Deletion failed:', data.message);
+                }
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        });
         </script>
         </body></html>`;
-        res.send(html);
-        //console.log('Deleting product:', product.name);
+        return res.send(html);
+
     } catch (error) {
-        res.status(500).json({ message: "An error occurred while deleting the product" });
+    res.status(500).json({ message: "An error occurred while deleting the product" });
     }
-};
+    };
 
 
 const getProductsByCategory = async (req, res) => {
