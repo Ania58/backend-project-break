@@ -324,9 +324,9 @@ const getProductsByCategory = async (req, res) => {
         ///products/T-shirt
         const category = req.path.split('/products/').join('') // /products/T-shirt => T-shirt
 
-        const products = await Product.findOne({category}); 
+        const products = await Product.find({category}); 
 
-        const productCards = getProductCards([products]); 
+        const productCards = getProductCards(products); 
         const html = baseHtml + getNavBar() + productCards + '</body></html>';
         res.send(html);
     } catch (error) {
