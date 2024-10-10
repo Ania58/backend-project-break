@@ -13,6 +13,7 @@ function getNavBar() {
                 <li><a href="/products/Trousers">Trousers</a></li>
                 <li><a href="/products/Shoes">Shoes</a></li>
                 <li><a href="/products/Coats">Coats</a></li>
+                <li><a href="/products/Sweaters">Sweaters</a></li>
             </ul>
     </nav>`;
 }
@@ -95,6 +96,7 @@ const showNewProduct = (req, res) => {
                     <option value="Trousers">Trousers</option>
                     <option value="Shoes">Shoes</option>
                     <option value="Coats">Coats</option>
+                    <option value="Sweaters">Sweaters</option>
                 </select><br>
         </div>
         <div class="form-group">
@@ -158,6 +160,7 @@ const showEditProduct = async (req, res) => {
                     <option value="Trousers" ${product.category === 'Trousers' ? 'selected' : ''}>Trousers</option>
                     <option value="Shoes" ${product.category === 'Shoes' ? 'selected' : ''}>Shoes</option>
                     <option value="Coats" ${product.category === 'Coats' ? 'selected' : ''}>Coats</option>
+                    <option value="Sweaters" ${product.category === 'Sweaters' ? 'selected' : ''}>Sweaters</option>
                 </select><br>
             </div>
             <div class="form-group">

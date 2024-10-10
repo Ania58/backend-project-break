@@ -11,6 +11,7 @@ router.get('/products', productController.showProducts);
 router.get('/products/Trousers', productController.getProductsByCategory);
 router.get('/products/Shoes', productController.getProductsByCategory);
 router.get('/products/Coats', productController.getProductsByCategory);
+router.get('/products/Sweaters', productController.getProductsByCategory);
 
 router.get('/products/:productId', productController.showProductById);
 
