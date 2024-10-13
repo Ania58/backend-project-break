@@ -51,10 +51,10 @@ const login = async () => {
     if (data.success) {
       window.location.href = '/dashboard';
     } else {
-      message.textContent = 'Login failed: ' , data.error;
+      message.textContent = 'Login failed: ' + data.error;
     }
   } catch (error) {
-    message.textContent = 'Error during login: ' , error.message;
+    message.textContent = 'Error during login: ' +  error.message;
   }
 };
 

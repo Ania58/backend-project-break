@@ -15,6 +15,9 @@ const getLoginPage = (req, res) => {
 };
 
 const getDashboard = (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
   const mail = req.user.email;
   res.send(`
     <!DOCTYPE html>
