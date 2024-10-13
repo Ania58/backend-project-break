@@ -271,6 +271,12 @@ nav a:hover {
 }
 
 
+.delete-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
 .form-group {
     margin-bottom: 1.5rem; 
 }
