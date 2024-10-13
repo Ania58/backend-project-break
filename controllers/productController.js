@@ -208,9 +208,10 @@ const showEditProduct = async (req, res) => {
                 }
 
                 const data = await response.json();
+                console.log('/dashboard/:productId/edit')
 
                 if (data.success) {
-                    window.location.href = '/dashboard'; // Redirect after successful deletion
+                    window.location.href = data.redirectUrl
                 } else {
                     console.log('Edition failed:', data.message);
                 }
@@ -221,6 +222,7 @@ const showEditProduct = async (req, res) => {
         </script>
         </body></html>`;
         res.send(html);
+        console.log('/dashboard/:productId/edit')
     } catch (error) {
         console.error('Error loading edit form:', error);
         res.status(500).json({ message: 'An error occurred while loading the edit form.' });
@@ -235,7 +237,8 @@ const updateProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "The product with the provided id does not exist" })
         }
-        res.redirect(`/products/${product._id}`);
+        /*res.redirect(`/products/${product._id}`);*/
+        res.status(200).json({ success: true, redirectUrl: `/products/${product._id}` });
     } catch (error) {
         res.status(500).json({ message: "An error occurred while updating the product" });
     }
