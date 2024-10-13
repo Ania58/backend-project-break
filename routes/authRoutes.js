@@ -47,4 +47,10 @@ router.post('/register', async (req, res) => {
   
 })
 
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/login');
+  });
+  
+
   module.exports = router;

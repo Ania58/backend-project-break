@@ -14,6 +14,8 @@ function getNavBar() {
                 <li><a href="/products/Shoes">Shoes</a></li>
                 <li><a href="/products/Coats">Coats</a></li>
                 <li><a href="/products/Sweaters">Sweaters</a></li>
+                <li><a href ="/register">Sign Up</a></li>
+                <li><a href ="/register">Sign In</a></li>
             </ul>
     </nav>`;
 }
