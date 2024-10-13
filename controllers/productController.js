@@ -208,9 +208,10 @@ const showEditProduct = async (req, res) => {
                 }
 
                 const data = await response.json();
+                console.log('/dashboard/:productId/edit')
 
                 if (data.success) {
-                    window.location.href = '/dashboard'; // Redirect after successful deletion
+                    window.location.href = data.redirectUrl
                 } else {
                     console.log('Edition failed:', data.message);
                 }
@@ -221,6 +222,7 @@ const showEditProduct = async (req, res) => {
         </script>
         </body></html>`;
         res.send(html);
+        console.log('/dashboard/:productId/edit')
     } catch (error) {
         console.error('Error loading edit form:', error);
         res.status(500).json({ message: 'An error occurred while loading the edit form.' });
@@ -235,7 +237,8 @@ const updateProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "The product with the provided id does not exist" })
         }
-        res.redirect(`/products/${product._id}`);
+        /*res.redirect(`/products/${product._id}`);*/
+        res.status(200).json({ success: true, redirectUrl: `/products/${product._id}` });
     } catch (error) {
         res.status(500).json({ message: "An error occurred while updating the product" });
     }
@@ -259,26 +262,14 @@ const deleteProduct = async (req, res) => {
             return res.json({ success: true, message: `Product "${product.name}" has been successfully deleted.` });
         }
 
-        // Return HTML with a deletion success message and auto-redirect
-        const messageHtml = `
-        <div class="message">
-            <h1>Product "${product.name}" has been successfully deleted.</h1>
-            <p>Redirecting to the dashboard...</p>
-        </div>
-        <script>
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 3000); // Redirect after 3 seconds
-        </script>
-        `;
-        return res.send(baseHtml + getNavBar() + messageHtml);
+        return res.redirect('/dashboard');
         }
 
         // If 'confirm' is not true, show the confirmation page
         const html = baseHtml + getNavBar() + `
         <div class="delete-confirmation">
         <h1>Are you sure you want to delete "${product.name}"?</h1>
-        <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST">
+        <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST" class="delete-form">
             <button type="submit"  class="button" id="delete-button">Delete</button>
             <a href="/dashboard" class="cancel-button">Cancel</a>
         </form>
