@@ -131,7 +131,7 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
         const product = await Product.create({ name, description, category, image, size, price });
-        res.redirect(`/products/${product._id}`); // Redirect to the new product detail page
+        res.redirect(`/dashboard/${product._id}`); // Redirect to the new product detail page
     } catch (error) {
         console.error('Error creating product:', error);
         res.status(500).json({ message: "There was a problem trying to create a product" });
