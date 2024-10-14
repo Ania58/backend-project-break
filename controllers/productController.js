@@ -15,10 +15,12 @@ function getNavBar(req) {
                 <li><a href="/products/Shoes">Shoes</a></li>
                 <li><a href="/products/Coats">Coats</a></li>
                 <li><a href="/products/Sweaters">Sweaters</a></li>
+                 <div class="special-links">
                 ${isDashboard 
                     ? '<li><a href="/dashboard/new">Create a new product</a></li><li><a href="/logout">Logout</a></li>' 
                     : '<li><a href="/register">Sign Up</a></li><li><a href="/login">Log In</a></li>'
                 }
+                </div>
             </ul>
     </nav>`;
 }
