@@ -4,7 +4,8 @@ const Product = require('../models/Product');
 const baseHtml = `<html><head><title>Web Store</title><link rel="stylesheet" href="/styles/styles.css"></head><body>`;
 
 // Function to generate navigation bar
-function getNavBar() {
+function getNavBar(req) {
+    const isDashboard = req.url.includes('dashboard');
     return `
         <nav>
             <ul>
@@ -14,8 +15,10 @@ function getNavBar() {
                 <li><a href="/products/Shoes">Shoes</a></li>
                 <li><a href="/products/Coats">Coats</a></li>
                 <li><a href="/products/Sweaters">Sweaters</a></li>
-                <li><a href ="/register">Sign Up</a></li>
-                <li><a href ="/register">Sign In</a></li>
+                ${isDashboard 
+                    ? '<li><a href="/logout">Logout</a></li>' 
+                    : '<li><a href="/register">Sign Up</a></li><li><a href="/login">Log In</a></li>'
+                }
             </ul>
     </nav>`;
 }
@@ -42,7 +45,7 @@ const showProducts = async (req, res) => {
     const products = await Product.find();
     const isDashboard = req.url.includes('dashboard');
     const productCards = getProductCards(products, isDashboard);
-    const html = baseHtml + getNavBar() + productCards + '</body></html>';
+    const html = baseHtml + getNavBar(req) + productCards + '</body></html>';
     res.send(html);
 } catch (error) {
     res.status(500).json({ message: "There was an error fetching the products" });
@@ -57,7 +60,7 @@ const showProductById = async (req, res) => {
             return res.status(404).json({ message: "The product with the provided id does not exist" });
         }
         const isDashboard = req.url.includes('dashboard');
-        const html = baseHtml + getNavBar() + `
+        const html = baseHtml + getNavBar(req) + `
         <div class="product-detail">
             <h1>${product.name}</h1>
             <img src="${product.image}" alt="${product.name}" class="product-image">
@@ -78,7 +81,7 @@ const showProductById = async (req, res) => {
 
 // Show form to create a new product
 const showNewProduct = (req, res) => {
-    const html = baseHtml + getNavBar() + `
+    const html = baseHtml + getNavBar(req) + `
      <div class="new-product-form">
         <h1>Create New Product</h1>
         <form action="/dashboard" method="POST">
@@ -142,7 +145,7 @@ const showEditProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "The product with the provided id does not exist" });
         }
-        const html = baseHtml + getNavBar() + `
+        const html = baseHtml + getNavBar(req) + `
         <div class="edit-product-form">
             <h1>Edit Product</h1>
             <form action="/dashboard/${product._id}" method="POST">
@@ -268,7 +271,7 @@ const deleteProduct = async (req, res) => {
         }
 
         // If 'confirm' is not true, show the confirmation page
-        const html = baseHtml + getNavBar() + `
+        const html = baseHtml + getNavBar(req) + `
         <div class="delete-confirmation">
         <h1>Are you sure you want to delete "${product.name}"?</h1>
         <form action="/dashboard/${req.params.productId}/delete?confirm=true" method="POST" class="delete-form">
@@ -323,7 +326,7 @@ const getProductsByCategory = async (req, res) => {
         const products = await Product.find({category}); 
 
         const productCards = getProductCards(products); 
-        const html = baseHtml + getNavBar() + productCards + '</body></html>';
+        const html = baseHtml + getNavBar(req) + productCards + '</body></html>';
         res.send(html);
     } catch (error) {
         console.error('Error fetching products by category:', error);
