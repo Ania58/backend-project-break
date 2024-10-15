@@ -15,6 +15,8 @@ admin.initializeApp({
 const app = express();
 const PORT = 8080;
 
+//for Swagger API http://localhost:8080/api-docs/#/
+
 const { dbConnection} = require('./config/db.js');
 
 const productRoutes = require('./routes/productRoutes.js');
@@ -34,3 +36,4 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 dbConnection();
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
