@@ -12,8 +12,6 @@ router.get('/register', authController.getRegisterPage);
 
 router.get('/login', authController.getLoginPage);
 
-router.get('/dashboard', authMiddleware, authController.getDashboard);
-
 router.get('/logout', authController.logoutUser);
 
 router.post('/register', authController.registerUser);

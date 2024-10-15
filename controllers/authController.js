@@ -14,29 +14,6 @@ const getLoginPage = (req, res) => {
   res.sendFile(path.join(__dirname, '../public/views', 'login.html'));
 };
 
-const getDashboard = (req, res) => {
-    if (!req.user) {
-        return res.redirect('/login');
-    }
-  const mail = req.user.email;
-  res.send(`
-    <!DOCTYPE html>
-      <html lang="eng">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard</title>
-      </head>
-      <body>
-        <h1>Hello ${mail}</h1>
-        <form action="/logout" method="post">
-          <button type="submit">Logout</button>
-        </form>
-      </body>
-    </html>
-  `);
-};
-
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -69,7 +46,6 @@ module.exports = {
   redirectToLogin,
   getRegisterPage,
   getLoginPage,
-  getDashboard,
   registerUser,
   loginUser,
   logoutUser
