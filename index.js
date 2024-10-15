@@ -3,6 +3,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
 const firebase = require('./config/firebase')
+const swaggerUi = require('swagger-ui-express');
+const docs = require('./docs/index'); 
 
 require('dotenv').config();
 
@@ -27,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', productRoutes, authRoutes);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 
 dbConnection();
 
