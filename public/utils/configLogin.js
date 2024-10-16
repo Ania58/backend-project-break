@@ -54,8 +54,19 @@ const login = async () => {
       message.textContent = 'Login failed: ' + data.error;
     }
   } catch (error) {
-    message.textContent = 'Error during login: ' +  error.message;
+    console.error(error); 
+  if (error.code === 'auth/invalid-login-credentials' || 
+      error.code === 'auth/wrong-password' || 
+      error.code === 'auth/user-not-found') {
+    message.textContent = 'Incorrect email or password. Please try again.';
+    } else if (error.code === 'auth/invalid-email') {
+      message.textContent = 'The email address is not valid. Please check your input.';
+    } else if (error.code === 'auth/too-many-requests') {
+      message.textContent = 'Too many login attempts. Please try again later.';
+    } else {
+      message.textContent = 'An unexpected error occurred. Please try again later.';
+    }
   }
-};
+}
 
 document.getElementById('loginButton').addEventListener('click', login);
