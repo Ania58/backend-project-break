@@ -1,7 +1,7 @@
 const Product = require('../models/Product');
 
 // Base HTML structure
-const baseHtml = `<html><head><title>Web Store</title><link rel="stylesheet" href="/styles/styles.css"></head><body>`;
+const baseHtml = `<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Web Store</title><link rel="stylesheet" href="/styles/styles.css"></head><body>`;
 
 // Function to generate navigation bar
 function getNavBar(req) {
