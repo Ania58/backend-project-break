@@ -274,21 +274,35 @@ describe('DELETE /dashboard/:id', () => {
         Product.findByIdAndDelete.mockResolvedValue(product);
 
         const response = await request(app).delete(`/dashboard/${product._id}?confirm=true`);
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(302);
+        expect(Product.findById).toHaveBeenCalledWith(product._id);
+        expect(Product.findByIdAndDelete).toHaveBeenCalledWith(product._id);
+        expect(response.headers.location).toBe('/dashboard');
+        expect(response.body).toHaveProperty('success', true);
+        expect(response.body).toHaveProperty('message', `Product "${product.name}" has been successfully deleted.`);
     });
 
     it('should return 404 if product does not exist', async () => {
 
+
+        
+        Product.findById.mockResolvedValue(null);      
         Product.findByIdAndDelete.mockResolvedValue(null);
 
-        const response = await request(app).delete('/dashboard/60c72b2f9b1d4c3f00123456?confirm=true');
+        const response = await request(app).delete(`/dashboard/60c72b2f9b1d4c3f00123456?confirm=true`);
         expect(response.status).toBe(404);
     });
 
     it('should return 500 if there is an error deleting a product', async () => {
+      const product = {
+        _id: '60c72b2f9b1d4c3f00123456',
+        name: 'Test Product',
+    };
+
+        Product.findById.mockResolvedValue(product);
         Product.findByIdAndDelete.mockRejectedValue(new Error('Database error')); 
     
-        const response = await request(app).delete('/dashboard/60c72b2f9b1d4c3f00123456'); 
+        const response = await request(app).delete(`/dashboard/${product._id}?confirm=true`); 
     
         expect(response.status).toBe(500); // Check for internal server error status
         expect(response.body).toHaveProperty('message', "An error occurred while deleting the product"); 
